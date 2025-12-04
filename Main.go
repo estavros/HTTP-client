@@ -4,6 +4,8 @@ import (
 	"bufio"
 	"fmt"
 	"net"
+	"strconv"
+	"strings"
 )
 
 func main() {
@@ -27,8 +29,30 @@ func main() {
 		panic(err)
 	}
 
-	// Read response
 	reader := bufio.NewReader(conn)
+
+	// Read status line
+	statusLine, err := reader.ReadString('\n')
+	if err != nil {
+		panic(err)
+	}
+	fmt.Print("Status Line: ", statusLine)
+
+	// Parse status code
+	parts := strings.SplitN(statusLine, " ", 3)
+	if len(parts) >= 2 {
+		statusCode, err := strconv.Atoi(parts[1])
+		if err == nil {
+			if statusCode == 200 {
+				fmt.Println("✅ HTTP Status: 200 OK")
+			} else {
+				fmt.Printf("⚠ HTTP Status: %d\n", statusCode)
+			}
+		}
+	}
+
+	// Print the rest of the response
+	fmt.Println("\n=== Full Response ===")
 	for {
 		line, err := reader.ReadString('\n')
 		if err != nil {
