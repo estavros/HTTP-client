@@ -43,9 +43,14 @@ func main() {
 	if len(parts) >= 2 {
 		statusCode, err := strconv.Atoi(parts[1])
 		if err == nil {
-			if statusCode == 200 {
+			switch statusCode {
+			case 200:
 				fmt.Println("✅ HTTP Status: 200 OK")
-			} else {
+			case 404:
+				fmt.Println("❌ HTTP Status: 404 Not Found")
+			case 500:
+				fmt.Println("💥 HTTP Status: 500 Internal Server Error")
+			default:
 				fmt.Printf("⚠ HTTP Status: %d\n", statusCode)
 			}
 		}
