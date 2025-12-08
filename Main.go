@@ -13,6 +13,12 @@ func main() {
 	port := "80"
 	path := "/"
 
+	// Optional custom headers
+	headers := map[string]string{
+		"User-Agent": "MyClient/1.0",
+		"Accept":     "*/*",
+	}
+
 	// Connect via TCP
 	conn, err := net.Dial("tcp", host+":"+port)
 	if err != nil {
@@ -21,7 +27,11 @@ func main() {
 	defer conn.Close()
 
 	// Build HTTP GET request
-	request := fmt.Sprintf("GET %s HTTP/1.1\r\nHost: %s\r\nConnection: close\r\n\r\n", path, host)
+	request := fmt.Sprintf("GET %s HTTP/1.1\r\nHost: %s\r\n", path, host)
+	for k, v := range headers {
+		request += fmt.Sprintf("%s: %s\r\n", k, v)
+	}
+	request += "Connection: close\r\n\r\n"
 
 	// Send request
 	_, err = conn.Write([]byte(request))
